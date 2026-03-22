@@ -1,0 +1,14 @@
+{
+  "dataset_root": "data/ews",
+  "train_split": "train",
+  "validation_split": "validation",
+  "evaluation_split": "test",
+  "method": "method_2",
+  "output_dir": "outputs",
+  "save_overlay": true,
+  "save_qualitative_panel": true,
+  "limit": null,
+  "method_params": {
+    "samples_per_image": 1500
+  }
+}

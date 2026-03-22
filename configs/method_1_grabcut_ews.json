@@ -1,0 +1,28 @@
+{
+  "dataset_root": "data/ews",
+  "train_split": "train",
+  "validation_split": "validation",
+  "evaluation_split": "test",
+  "method": "method_1",
+  "output_dir": "outputs",
+  "save_overlay": true,
+  "save_qualitative_panel": true,
+  "limit": null,
+  "method_params": {
+    "variant": "grabcut",
+    "blur_sigma": 1.0,
+    "foreground_percentile": 80.0,
+    "background_percentile": 15.0,
+    "majority_window_size": 5,
+    "majority_threshold": 0.5,
+    "opening_size": 2,
+    "closing_size": 3,
+    "min_component_size": 96,
+    "grabcut_iterations": 5,
+    "grabcut_foreground_candidates": [75.0, 80.0, 85.0, 90.0],
+    "grabcut_background_candidates": [5.0, 10.0, 15.0, 20.0],
+    "majority_threshold_candidates": [0.45, 0.48, 0.5, 0.52],
+    "grabcut_iteration_candidates": [3, 5, 7],
+    "random_state": 42
+  }
+}

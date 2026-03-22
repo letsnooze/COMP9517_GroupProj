@@ -1,0 +1,33 @@
+[build-system]
+requires = ["setuptools>=68"]
+build-backend = "setuptools.build_meta"
+
+[project]
+name = "comp9517-image-segmentation"
+version = "0.1.0"
+description = "Project scaffold for a three-method image segmentation assignment."
+readme = "README.md"
+requires-python = ">=3.10"
+dependencies = [
+  "numpy>=1.24",
+  "Pillow>=10.0",
+  "matplotlib>=3.7",
+  "scipy>=1.10",
+  "scikit-learn>=1.4",
+]
+
+[project.optional-dependencies]
+dev = ["pytest>=8.0"]
+dl = [
+  "torch>=2.2",
+  "torchvision>=0.17",
+]
+
+[project.scripts]
+segment-image = "image_segmentation_framework.cli:main"
+
+[tool.setuptools]
+package-dir = {"" = "src"}
+
+[tool.setuptools.packages.find]
+where = ["src"]
