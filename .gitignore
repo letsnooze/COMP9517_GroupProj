@@ -1,22 +1,64 @@
+# ── OS / editor artefacts ─────────────────────────────────────────────────────
 .DS_Store
+**/.DS_Store
+Thumbs.db
+
+# ── Python ────────────────────────────────────────────────────────────────────
 __pycache__/
-.pytest_cache/
-.mypy_cache/
-.venv/
 *.pyc
+*.pyo
+*.pyd
+.Python
+
+# ── Virtual environments ───────────────────────────────────────────────────────
+.venv/
+venv/
+env/
+
+# ── Build / packaging ─────────────────────────────────────────────────────────
 build/
 dist/
 *.egg-info/
+*.egg
 
-outputs/*
-!outputs/.gitkeep
+# ── Test / lint / type-check caches ───────────────────────────────────────────
+.pytest_cache/
+.mypy_cache/
+.ruff_cache/
+htmlcov/
+.coverage
+coverage.xml
+
+# ── Jupyter ───────────────────────────────────────────────────────────────────
+.ipynb_checkpoints/
+
+# ── Trained model files (do not include in submission) ────────────────────────
+*.pth
+*.pt
+*.pkl
+*.h5
+*.ckpt
+models/
+
+# ── Dataset (large; download separately) ──────────────────────────────────────
+data/ews/*
+!data/ews/.gitkeep
 
 data/processed/*
 !data/processed/.gitkeep
 
-data/ews/*
-!data/ews/.gitkeep
+# ── Experiment outputs (large; regenerate by running the code) ─────────────────
+outputs/*
+!outputs/.gitkeep
 
-models/
+# ── Node.js (report generator) ────────────────────────────────────────────────
+node_modules/
+package-lock.json
+
+# ── Submission bundles ────────────────────────────────────────────────────────
 submission/code_bundle/
 submission/comp9517_code_submission.zip
+*.zip
+
+# ── Logs ──────────────────────────────────────────────────────────────────────
+*.log
