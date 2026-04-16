@@ -202,7 +202,7 @@ function makeTable5() {
       [["Chromaticity",true],"3","r=R/(R+G+B), g=G/(R+G+B), b=B/(R+G+B)"],
       [["Local means",true],"6","Mean RGB and HSV in 9\u00d79 neighbourhood"],
       [["Veg. indices",true],"3","ExG=2G\u2212R\u2212B; ExR=1.4R\u2212G; ExGR=ExG\u2212ExR"],
-      [["Local ExG stats",true],"2","Mean and std of ExG in 9\u00d79 window"],
+      [["Local ExG/ExGR stats",true],"3","ExG mean; ExG std; ExGR mean in 9\u00d79 window"],
       [["Greyscale",true],"3","Grey intensity, local mean, local std"],
       [["Gradients",true],"2","Sobel magnitude; ExG gradient magnitude"],
       [["Total",false],"26",""],
@@ -476,9 +476,13 @@ const doc = new Document({
           "Seeds are extracted by percentile thresholding: pixels above the foreground " +
           "percentile (\u03b8\u209c) are labelled definite foreground; pixels below the " +
           "background percentile (\u03b8\u2082) are definite background. The remainder " +
-          "is marked unknown. Two segmentation variants share this seeding: (a) " +
-          "\u2018Watershed\u2019 runs scipy watershed_ift on the gradient image; " +
-          "(b) \u2018GrabCut\u2019 uses OpenCV grabCut for iterative GMM refinement. " +
+          "is marked unknown. Two segmentation variants share this seeding framework " +
+          "but use slightly different vegetation score coefficients: (a) " +
+          "\u2018Watershed\u2019 uses the formula above and runs scipy watershed_ift " +
+          "on the gradient image; (b) \u2018GrabCut\u2019 uses a simplified score " +
+          "(1.5\u00b7ExG + 0.9\u00b7G\u2091 + 0.35\u00b7Sat, without the gradient " +
+          "suppression term) and runs OpenCV grabCut for iterative GMM refinement. " +
+          "All reported results use the Watershed variant. " +
           "Output masks are post-processed with morphological opening and closing, " +
           "followed by removal of connected components smaller than 96 pixels."
         ),
