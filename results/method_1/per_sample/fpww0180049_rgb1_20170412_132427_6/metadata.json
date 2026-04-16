@@ -1,0 +1,75 @@
+{
+  "method": "method_1",
+  "run_id": "20260414_232230_method1-watershed",
+  "run_name": "method1-watershed",
+  "sample_id": "fpww0180049_rgb1_20170412_132427_6",
+  "fit_metadata": {
+    "trained": false,
+    "category": "classical_advanced_segmentation",
+    "variant": "watershed",
+    "selected_params": {
+      "variant": "watershed",
+      "foreground_percentile": 75.0,
+      "background_percentile": 10.0,
+      "majority_threshold": 0.45,
+      "grabcut_iterations": 5
+    },
+    "validation_iou": 0.44408530587783135,
+    "note": "This method is non-trainable and uses validation data only for parameter tuning."
+  },
+  "inference_seconds": 0.021072750001621898,
+  "method_params": {
+    "variant": "watershed",
+    "blur_sigma": 1.0,
+    "foreground_percentile": 80.0,
+    "background_percentile": 25.0,
+    "majority_window_size": 5,
+    "majority_threshold": 0.52,
+    "opening_size": 2,
+    "closing_size": 3,
+    "min_component_size": 96,
+    "watershed_foreground_candidates": [
+      75.0,
+      80.0,
+      85.0,
+      90.0
+    ],
+    "watershed_background_candidates": [
+      10.0,
+      15.0,
+      20.0,
+      25.0
+    ],
+    "majority_threshold_candidates": [
+      0.45,
+      0.48,
+      0.5,
+      0.52
+    ],
+    "random_state": 42
+  },
+  "prediction_metadata": {
+    "category": "classical_advanced_segmentation",
+    "placeholder": false,
+    "variant": "watershed",
+    "selected_params": {
+      "variant": "watershed",
+      "foreground_percentile": 75.0,
+      "background_percentile": 10.0,
+      "majority_threshold": 0.45,
+      "grabcut_iterations": 5
+    },
+    "foreground_cutoff": 0.5997850894927979,
+    "background_cutoff": 0.3485479950904846,
+    "num_foreground_seed_pixels": 37347,
+    "num_background_seed_pixels": 10297,
+    "blur_sigma": 1.0
+  },
+  "metrics": {
+    "precision": 0.4660933690734654,
+    "recall": 0.5043905128171473,
+    "f1_score": 0.4844863018016314,
+    "iou": 0.3196845415370281,
+    "pixel_accuracy": 0.3324244897959184
+  }
+}

@@ -1,0 +1,13 @@
+{
+  "method_3_robust": {
+    "clean": 0.8608101544757033,
+    "noise_mild": 0.8376742368275097,
+    "noise_strong": 0.7716017483366272,
+    "blur_mild": 0.8544708965260284,
+    "blur_strong": 0.8326531644652285,
+    "dark_mild": 0.8061446741075563,
+    "dark_strong": 0.6971103612482187,
+    "lowcontrast_mild": 0.8440899460311503,
+    "lowcontrast_strong": 0.7619798784688108
+  }
+}

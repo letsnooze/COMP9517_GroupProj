@@ -1,0 +1,90 @@
+{
+  "method": "method_3",
+  "config_path": "configs/method_3_robust_ews.json",
+  "train_seconds": 129.1483234169864,
+  "fit_metadata": {
+    "trained": true,
+    "category": "deep_learning",
+    "epochs": 20,
+    "batch_size": 4,
+    "learning_rate": 0.001,
+    "distortion_augment": true,
+    "best_validation_iou": 0.8585396755510765,
+    "selected_threshold": 0.4,
+    "num_train_samples": 142
+  },
+  "distortions": {
+    "clean": {
+      "label": "Clean (no distortion)",
+      "avg_iou": 0.8608101544757033,
+      "avg_f1": 0.923129116799088,
+      "avg_precision": 0.9042775834739178,
+      "avg_recall": 0.946248956340203,
+      "avg_pixel_acc": 0.9117387755102041
+    },
+    "noise_mild": {
+      "label": "Gaussian noise \u03c3=15",
+      "avg_iou": 0.8376742368275097,
+      "avg_f1": 0.9083355249572659,
+      "avg_precision": 0.8736330754685517,
+      "avg_recall": 0.9526515075286984,
+      "avg_pixel_acc": 0.8920013605442176
+    },
+    "noise_strong": {
+      "label": "Gaussian noise \u03c3=40",
+      "avg_iou": 0.7716017483366272,
+      "avg_f1": 0.8624725622535274,
+      "avg_precision": 0.7988531304575901,
+      "avg_recall": 0.9580601794354014,
+      "avg_pixel_acc": 0.826721768707483
+    },
+    "blur_mild": {
+      "label": "Gaussian blur \u03c3=1.5",
+      "avg_iou": 0.8544708965260284,
+      "avg_f1": 0.9192994236275795,
+      "avg_precision": 0.9030602322505877,
+      "avg_recall": 0.9400434961035076,
+      "avg_pixel_acc": 0.9078585034013605
+    },
+    "blur_strong": {
+      "label": "Gaussian blur \u03c3=3.0",
+      "avg_iou": 0.8326531644652285,
+      "avg_f1": 0.9056992590194048,
+      "avg_precision": 0.8957585052627147,
+      "avg_recall": 0.9213544907028275,
+      "avg_pixel_acc": 0.8942948979591837
+    },
+    "dark_mild": {
+      "label": "Low brightness \u00d70.7",
+      "avg_iou": 0.8061446741075563,
+      "avg_f1": 0.8841313130398457,
+      "avg_precision": 0.8192555440504139,
+      "avg_recall": 0.9810594407830214,
+      "avg_pixel_acc": 0.8506482993197279
+    },
+    "dark_strong": {
+      "label": "Low brightness \u00d70.4",
+      "avg_iou": 0.6971103612482187,
+      "avg_f1": 0.80191167933519,
+      "avg_precision": 0.7003725225666317,
+      "avg_recall": 0.9939673414282392,
+      "avg_pixel_acc": 0.7116642857142857
+    },
+    "lowcontrast_mild": {
+      "label": "Low contrast \u00d70.7",
+      "avg_iou": 0.8440899460311503,
+      "avg_f1": 0.912592859151637,
+      "avg_precision": 0.8973133054039796,
+      "avg_recall": 0.9368254631196871,
+      "avg_pixel_acc": 0.898645918367347
+    },
+    "lowcontrast_strong": {
+      "label": "Low contrast \u00d70.4",
+      "avg_iou": 0.7619798784688108,
+      "avg_f1": 0.8526030435521289,
+      "avg_precision": 0.8713122327050339,
+      "avg_recall": 0.8809936771449471,
+      "avg_pixel_acc": 0.840365306122449
+    }
+  }
+}

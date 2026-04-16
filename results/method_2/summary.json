@@ -1,0 +1,49 @@
+{
+  "run_id": "20260414_232309_method2-rf",
+  "run_name": "method2-rf",
+  "method": "method_2",
+  "dataset_root": "data/ews",
+  "train_split": "train",
+  "validation_split": "validation",
+  "evaluation_split": "test",
+  "num_train_samples": 142,
+  "num_validation_samples": 24,
+  "num_evaluation_samples": 24,
+  "training_seconds": 126.34380516700185,
+  "mean_inference_seconds": 0.32507922041637966,
+  "aggregate_metrics": {
+    "precision": 0.9146803309857933,
+    "recall": 0.9261368803685663,
+    "f1_score": 0.9164423573577073,
+    "iou": 0.8499029138442842,
+    "pixel_accuracy": 0.9067482993197279
+  },
+  "fit_metadata": {
+    "trained": true,
+    "category": "feature_based_learning",
+    "num_train_samples": 142,
+    "pixels_used_for_training": 566370,
+    "feature_dimension": 26,
+    "probability_threshold": 0.35,
+    "validation_iou": 0.8463786612828416
+  },
+  "method_params": {
+    "n_estimators": 250,
+    "max_depth": 20,
+    "samples_per_image": 4000,
+    "feature_window_size": 9,
+    "threshold_candidates": [
+      0.35,
+      0.4,
+      0.45,
+      0.5,
+      0.55,
+      0.6,
+      0.65
+    ],
+    "opening_size": 1,
+    "closing_size": 2,
+    "min_component_size": 96,
+    "random_state": 42
+  }
+}
