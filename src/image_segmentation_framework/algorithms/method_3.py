@@ -29,9 +29,15 @@ except ImportError:
 
 if TORCH_AVAILABLE:
     class _SegmentationDataset(Dataset):
-        def __init__(self, samples: Sequence[DatasetSample], augment: bool = False) -> None:
+        def __init__(
+            self,
+            samples: Sequence[DatasetSample],
+            augment: bool = False,
+            distortion_augment: bool = False,
+        ) -> None:
             self.samples = list(samples)
             self.augment = augment
+            self.distortion_augment = distortion_augment
 
         def __len__(self) -> int:
             return len(self.samples)
@@ -48,12 +54,15 @@ if TORCH_AVAILABLE:
             return image_tensor, mask_tensor
 
         def _augment(self, image: np.ndarray, mask: np.ndarray) -> tuple[np.ndarray, np.ndarray]:
+            # --- geometric augmentation ---
             if np.random.rand() < 0.5:
                 image = np.flip(image, axis=1).copy()
                 mask = np.flip(mask, axis=1).copy()
             if np.random.rand() < 0.5:
                 image = np.flip(image, axis=0).copy()
                 mask = np.flip(mask, axis=0).copy()
+
+            # --- mild colour jitter (original augmentation) ---
             brightness = np.random.uniform(0.9, 1.1)
             contrast = np.random.uniform(0.9, 1.1)
             image_float = image.astype(np.float32)
@@ -63,7 +72,42 @@ if TORCH_AVAILABLE:
             if np.random.rand() < 0.3:
                 noise = np.random.normal(0, 3.0, size=image.shape)
                 image_float = np.clip(image_float + noise, 0, 255)
-            return image_float.astype(np.uint8), mask.astype(np.uint8)
+            image = image_float.astype(np.uint8)
+
+            # --- strong distortion augmentation (for robustness training) ---
+            if self.distortion_augment and np.random.rand() < 0.7:
+                image = self._apply_random_distortion(image)
+
+            return image, mask.astype(np.uint8)
+
+        @staticmethod
+        def _apply_random_distortion(image: np.ndarray) -> np.ndarray:
+            """Randomly apply one strong distortion drawn from the same conditions
+            used in the robustness benchmark (noise / blur / brightness / contrast).
+            Parameter ranges deliberately cover both mild and strong test levels."""
+            from scipy import ndimage as _ndimage
+
+            dist_type = np.random.randint(0, 4)
+            img_f = image.astype(np.float32)
+
+            if dist_type == 0:   # Gaussian noise, σ ∈ [10, 45]
+                sigma = np.random.uniform(10.0, 45.0)
+                noisy = img_f + np.random.normal(0.0, sigma, size=image.shape)
+                return np.clip(noisy, 0, 255).astype(np.uint8)
+
+            elif dist_type == 1:  # Gaussian blur, σ ∈ [1.0, 3.5]
+                sigma = np.random.uniform(1.0, 3.5)
+                blurred = _ndimage.gaussian_filter(img_f, sigma=(sigma, sigma, 0), mode="reflect")
+                return np.clip(blurred, 0, 255).astype(np.uint8)
+
+            elif dist_type == 2:  # Brightness reduction, factor ∈ [0.35, 0.75]
+                factor = np.random.uniform(0.35, 0.75)
+                return np.clip(img_f * factor, 0, 255).astype(np.uint8)
+
+            else:                 # Contrast reduction, factor ∈ [0.35, 0.75]
+                factor = np.random.uniform(0.35, 0.75)
+                mean = img_f.mean(axis=(0, 1), keepdims=True)
+                return np.clip((img_f - mean) * factor + mean, 0, 255).astype(np.uint8)
 
 
     class _DoubleConv(nn.Module):
@@ -162,6 +206,7 @@ class Method3Segmenter(BaseSegmenter):
         learning_rate: float = 1e-3,
         base_channels: int = 16,
         augment: bool = True,
+        distortion_augment: bool = False,
         threshold: float = 0.5,
         threshold_candidates: list[float] | None = None,
         opening_size: int = 1,
@@ -174,6 +219,7 @@ class Method3Segmenter(BaseSegmenter):
         self.learning_rate = learning_rate
         self.base_channels = base_channels
         self.augment = augment
+        self.distortion_augment = distortion_augment
         self.threshold = threshold
         self.threshold_candidates = (
             threshold_candidates if threshold_candidates is not None else [0.4, 0.45, 0.5, 0.55, 0.6]
@@ -203,7 +249,11 @@ class Method3Segmenter(BaseSegmenter):
         optimizer = torch.optim.Adam(self.model.parameters(), lr=self.learning_rate)
 
         train_loader = DataLoader(
-            _SegmentationDataset(train_samples, augment=self.augment),
+            _SegmentationDataset(
+                train_samples,
+                augment=self.augment,
+                distortion_augment=self.distortion_augment,
+            ),
             batch_size=self.batch_size,
             shuffle=True,
         )
@@ -255,6 +305,7 @@ class Method3Segmenter(BaseSegmenter):
             "epochs": self.epochs,
             "batch_size": self.batch_size,
             "learning_rate": self.learning_rate,
+            "distortion_augment": self.distortion_augment,
             "best_validation_iou": None if best_iou == float("-inf") else best_iou,
             "selected_threshold": self.threshold,
             "num_train_samples": len(train_samples),

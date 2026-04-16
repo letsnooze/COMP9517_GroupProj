@@ -196,20 +196,21 @@ function makeTable2() {
 }
 
 // ── TABLE III: Robustness under image distortions ─────────────────────────────
+// Columns: Distortion | M1 | M2 | M3 (clean aug) | M3-R (distortion aug)
 function makeTable3() {
-  const w = scaleW([2000, 960, 960, 960], COL_W);
+  const w = scaleW([1700, 700, 700, 700, 780], COL_W);
   return makeTable(w,
-    [["Distortion", true], "M1 IoU", "M2 IoU", "M3 IoU"],
+    [["Distortion", true], "M1", "M2", "M3", "M3-R"],
     [
-      [["Clean (baseline)",  true], "0.415", "0.850", "0.874"],
-      [["Noise \u03c3=15",   true], "0.474", "0.733", "0.831"],
-      [["Noise \u03c3=40",   true], "0.541", "0.672", "0.728"],
-      [["Blur \u03c3=1.5",   true], "0.399", "0.838", "0.864"],
-      [["Blur \u03c3=3.0",   true], "0.389", "0.798", "0.815"],
-      [["Brightness \u00d70.7", true], "0.424", "0.814", "0.844"],
-      [["Brightness \u00d70.4", true], "0.448", "0.723", "0.739"],
-      [["Contrast \u00d70.7",   true], "0.417", "0.820", "0.831"],
-      [["Contrast \u00d70.4",   true], "0.424", "0.648", "0.596"],
+      [["Clean (baseline)",  true], "0.415", "0.850", "0.874", "0.861"],
+      [["Noise \u03c3=15",   true], "0.474", "0.733", "0.831", "0.838"],
+      [["Noise \u03c3=40",   true], "0.541", "0.672", "0.728", "0.772"],
+      [["Blur \u03c3=1.5",   true], "0.399", "0.838", "0.864", "0.854"],
+      [["Blur \u03c3=3.0",   true], "0.389", "0.798", "0.815", "0.833"],
+      [["Brightness \u00d70.7", true], "0.424", "0.814", "0.844", "0.806"],
+      [["Brightness \u00d70.4", true], "0.448", "0.723", "0.739", "0.697"],
+      [["Contrast \u00d70.7",   true], "0.417", "0.820", "0.831", "0.844"],
+      [["Contrast \u00d70.4",   true], "0.424", "0.648", "0.596", "0.762"],
     ]
   );
 }
@@ -508,17 +509,23 @@ const doc = new Document({
           "To simulate real-world image degradation, we apply four distortion types to the " +
           "test set: Gaussian noise (\u03c3 = 15 and \u03c3 = 40), Gaussian blur " +
           "(\u03c3 = 1.5 and \u03c3 = 3.0), brightness reduction (\u00d70.7 and \u00d70.4), " +
-          "and contrast reduction (\u00d70.7 and \u00d70.4). Each method is trained once " +
-          "on clean data; only inference uses distorted images. Table III reports IoU."
+          "and contrast reduction (\u00d70.7 and \u00d70.4). Each method is trained once on " +
+          "clean data. Table III also includes M3-R, a U-Net variant trained with strong " +
+          "distortion augmentation (noise \u03c3\u223c[10,45], blur \u03c3\u223c[1.0,3.5], " +
+          "brightness/contrast factor\u223c[0.35,0.75] applied randomly at 70% probability)."
         ),
-        ...tblCap("III", "IoU under image distortions (trained on clean data)."),
+        ...tblCap("III", "IoU under image distortions. M3-R = U-Net with distortion augmentation."),
         makeTable3(),
         sp(120),
         body(
-          "U-Net is most robust in 8 of 9 conditions. The sole exception is extreme " +
-          "contrast reduction (\u00d70.4), where Random Forest (0.648) outperforms U-Net " +
-          "(0.596), likely because the spatial attention mechanism of U-Net relies on " +
-          "contrast cues whereas global colour statistics are more contrast-tolerant."
+          "Among the clean-trained models, U-Net (M3) is most robust in 8 of 9 conditions. " +
+          "The sole exception is extreme contrast reduction (\u00d70.4), where Random Forest " +
+          "(0.648) outperforms baseline U-Net (0.596). The distortion-augmented variant " +
+          "M3-R directly addresses this weakness: its IoU under extreme contrast rises to " +
+          "0.762 (+0.166 over M3), reclaiming the top position. M3-R also improves over M3 " +
+          "on noise and blur conditions. The trade-off is a small clean-data IoU drop " +
+          "(0.874 \u2192 0.861) and reduced brightness robustness, a classic accuracy\u2013" +
+          "robustness trade-off."
         ),
         body(
           "A counter-intuitive result is that Method 1 improves under noise: IoU rises " +
@@ -581,9 +588,11 @@ const doc = new Document({
           "The U-Net used here is lightweight (base channels = 16) to support CPU training. " +
           "Increasing model capacity or training for more epochs would likely push IoU above " +
           "0.90, approaching state-of-the-art values reported for this dataset. Additionally, " +
-          "the robustness experiment trains on clean data; augmenting with distorted images " +
-          "during training may further improve robustness, particularly for the contrast and " +
-          "noise conditions where the largest IoU drops are observed."
+          "the distortion-augmented variant M3-R improves contrast and noise robustness " +
+          "but shows reduced brightness robustness, suggesting the augmentation distribution " +
+          "could be further tuned (e.g., increasing brightness distortion frequency). A " +
+          "curriculum strategy that gradually increases distortion severity may also reduce " +
+          "the small clean-data accuracy trade-off (0.874 \u2192 0.861)."
         ),
 
         // ── VI. CONCLUSION ───────────────────────────────────────────────────
@@ -600,11 +609,11 @@ const doc = new Document({
         body(
           "Key findings: (1) a clear seasonal failure mode in classical colour-based " +
           "segmentation; (2) counter-intuitive robustness gain of ExG under Gaussian noise; " +
-          "(3) superior extreme-contrast robustness of Random Forest over U-Net; and " +
+          "(3) distortion augmentation recovers the extreme-contrast weakness of U-Net " +
+          "(IoU 0.596 \u2192 0.762, +0.166) with a small clean-data cost (\u22120.013); and " +
           "(4) high data efficiency for both learning-based methods. Future work should " +
-          "explore season-invariant features for classical methods, larger U-Net variants " +
-          "with distortion augmentation, and semi-supervised approaches to further reduce " +
-          "annotation requirements."
+          "explore season-invariant features, curriculum distortion training, and " +
+          "semi-supervised approaches to further reduce annotation requirements."
         ),
 
         // ── REFERENCES ───────────────────────────────────────────────────────

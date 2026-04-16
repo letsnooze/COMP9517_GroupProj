@@ -33,9 +33,10 @@ from image_segmentation_framework.utils.io import load_image, load_mask, save_js
 # ── Config paths for each method ─────────────────────────────────────────────
 
 METHOD_CONFIGS: dict[str, str] = {
-    "method_1": "configs/method_1_ews.json",
-    "method_2": "configs/method_2_ews.json",
-    "method_3": "configs/method_3_ews.json",
+    "method_1":        "configs/method_1_ews.json",
+    "method_2":        "configs/method_2_ews.json",
+    "method_3":        "configs/method_3_ews.json",
+    "method_3_robust": "configs/method_3_robust_ews.json",
 }
 
 
