@@ -154,6 +154,7 @@ if TORCH_AVAILABLE:
             return self.conv(torch.cat([skip, upsampled], dim=1))
 
 
+    # U-Net encoder-decoder with skip connections — Ronneberger et al. (2015)
     class _UNet(nn.Module):
         def __init__(self, base_channels: int = 16) -> None:
             super().__init__()
@@ -178,6 +179,9 @@ if TORCH_AVAILABLE:
 
 
     class _DiceBCELoss(nn.Module):
+        # Combined Dice + BCE loss — Dice loss from Milletari et al. (2016);
+        # Dice optimises overlap directly and handles class imbalance;
+        # BCE provides stable per-pixel gradients.
         def __init__(self, smooth: float = 1.0) -> None:
             super().__init__()
             self.smooth = smooth
@@ -246,6 +250,7 @@ class Method3Segmenter(BaseSegmenter):
         self.device = self._resolve_device()
         self.model = _UNet(base_channels=self.base_channels).to(self.device)
         criterion = _DiceBCELoss()
+        # Adam optimiser — Kingma & Ba (2015)
         optimizer = torch.optim.Adam(self.model.parameters(), lr=self.learning_rate)
 
         train_loader = DataLoader(
@@ -294,6 +299,7 @@ class Method3Segmenter(BaseSegmenter):
                     )
             self.training_history.append(epoch_record)
 
+        # Restore the checkpoint with the best validation IoU rather than the final epoch
         if best_state is not None:
             self.model.load_state_dict(best_state)
         if validation_samples:

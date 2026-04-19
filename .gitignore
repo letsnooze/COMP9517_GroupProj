@@ -62,3 +62,15 @@ submission/comp9517_code_submission.zip
 
 # ── Logs ──────────────────────────────────────────────────────────────────────
 *.log
+
+# ── Claude Code local settings ────────────────────────────────────────────────
+.claude/
+
+# ── Assignment PDFs (university copyright) ────────────────────────────────────
+COMP9517_26T1_*.pdf
+
+# ── Reference papers (copyright) ─────────────────────────────────────────────
+references/
+
+# ── Report template (not needed) ─────────────────────────────────────────────
+reports/conference-template-a4.docx

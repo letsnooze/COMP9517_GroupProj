@@ -69,6 +69,8 @@ class Method2Segmenter(BaseSegmenter):
             if len(foreground_indices) == 0 or len(background_indices) == 0:
                 continue
 
+            # Sample equal numbers of foreground and background pixels per image
+            # to avoid the classifier being dominated by the majority soil class.
             per_class = max(1, self.samples_per_image // 2)
             sampled_fg = rng.choice(
                 foreground_indices,
@@ -89,6 +91,7 @@ class Method2Segmenter(BaseSegmenter):
 
         train_x = np.vstack(sampled_features)
         train_y = np.concatenate(sampled_labels)
+        # Random Forest ensemble classifier — Breiman (2001)
         self.classifier = RandomForestClassifier(
             n_estimators=self.n_estimators,
             max_depth=self.max_depth,
@@ -120,6 +123,7 @@ class Method2Segmenter(BaseSegmenter):
         flat_features = features.reshape(-1, features.shape[-1])
         probabilities = self.classifier.predict_proba(flat_features)[:, 1]
         probability_map = probabilities.reshape(image.shape[:2])
+        # Use the threshold tuned on validation set rather than the default 0.5
         raw_mask = (probability_map >= self.probability_threshold).astype(np.uint8)
         mask = postprocess_binary_mask(
             raw_mask,

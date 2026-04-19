@@ -5,12 +5,14 @@ from scipy import ndimage
 
 
 def rgb_to_grayscale(image: np.ndarray) -> np.ndarray:
+    # ITU-R BT.601 luminance weights (0.299, 0.587, 0.114)
     if image.ndim != 3 or image.shape[2] != 3:
         raise ValueError("Expected an RGB image with shape (H, W, 3).")
     return np.dot(image[..., :3], np.array([0.299, 0.587, 0.114], dtype=np.float32))
 
 
 def gradient_magnitude(grayscale: np.ndarray) -> np.ndarray:
+    # Sobel operator for edge detection — see Gonzalez & Woods, Digital Image Processing
     grayscale = grayscale.astype(np.float32)
     grad_x = ndimage.sobel(grayscale, axis=1, mode="reflect")
     grad_y = ndimage.sobel(grayscale, axis=0, mode="reflect")
@@ -18,6 +20,7 @@ def gradient_magnitude(grayscale: np.ndarray) -> np.ndarray:
 
 
 def compute_excess_green(image: np.ndarray) -> np.ndarray:
+    # ExG = 2G - R - B, Woebbecke et al. (1995)
     image_float = image.astype(np.float32) / 255.0
     red = image_float[..., 0]
     green = image_float[..., 1]
@@ -96,6 +99,9 @@ def local_variance(image: np.ndarray, window_size: int) -> np.ndarray:
 
 
 def extract_handcrafted_features(image: np.ndarray, window_size: int = 9) -> np.ndarray:
+    # Builds a 26-dimensional feature vector per pixel combining raw colour (RGB, HSV,
+    # chromaticity), vegetation indices (ExG, ExR, ExGR), local statistics (mean and
+    # variance in a 9x9 window), and gradient features.
     image_float = image.astype(np.float32) / 255.0
     hsv = rgb_to_hsv(image)
     grayscale = rgb_to_grayscale(image).astype(np.float32) / 255.0

@@ -221,6 +221,9 @@ class Method1Segmenter(BaseSegmenter):
 
         green_dominance = image_float[..., 1] - 0.5 * (image_float[..., 0] + image_float[..., 2])
         saturation = hsv[..., 1]
+        # Composite vegetation score combining ExG, green dominance, saturation, and edge penalty.
+        # Coefficients were tuned manually: ExG is the primary cue, gradient is subtracted
+        # to suppress false seeds at object boundaries.
         vegetation_score = (
             1.7 * exg_smooth
             + 0.9 * green_dominance
@@ -248,6 +251,8 @@ class Method1Segmenter(BaseSegmenter):
         if np.any(overlap):
             background_seed = background_seed & ~overlap
 
+        # Watershed requires labelled seed markers: 1 = background, 2 = foreground.
+        # Fallback to extreme percentiles if seeds are empty after morphological cleanup.
         markers = np.zeros(image.shape[:2], dtype=np.int32)
         markers[background_seed] = 1
         markers[foreground_seed] = 2
@@ -317,6 +322,7 @@ class Method1Segmenter(BaseSegmenter):
 
         background_model = np.zeros((1, 65), np.float64)
         foreground_model = np.zeros((1, 65), np.float64)
+        # Iterative graph-cut foreground/background separation — Rother et al. (2004)
         cv2.grabCut(
             image.astype(np.uint8),
             mask,
