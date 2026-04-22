@@ -40,10 +40,7 @@ coverage.xml
 *.ckpt
 models/
 
-# ── Dataset (large; download separately) ──────────────────────────────────────
-data/ews/*
-!data/ews/.gitkeep
-
+# ── Dataset ───────────────────────────────────────────────────────────────────
 data/processed/*
 !data/processed/.gitkeep
 
@@ -74,3 +71,9 @@ references/
 
 # ── Report template (not needed) ─────────────────────────────────────────────
 reports/conference-template-a4.docx
+
+# ── Submission copy and local working files ───────────────────────────────────
+vision_pro_code/
+reports/*.pdf
+reports/修改.md
+submission_code.zip
